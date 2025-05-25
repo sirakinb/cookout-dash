@@ -25,7 +25,11 @@
         "backgroundColor": "#ff6b35"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.cookoutdash.app"
+      "package": "com.cookoutdash.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -33,6 +37,12 @@
     "plugins": [
       "expo-av",
       "expo-audio"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "986a1ecf-2ca1-4c64-8dbb-a3881b459306"
+      }
+    },
+    "owner": "defipapi"
   }
 }
