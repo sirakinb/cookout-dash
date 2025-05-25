@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Image, StyleSheet, Animated } from 'react-native';
 
 export default function Player({ x, y, isInvincible }) {
   const bounceAnim = useRef(new Animated.Value(0)).current;
@@ -71,46 +71,29 @@ export default function Player({ x, y, isInvincible }) {
       ]}
     >
       <View style={styles.playerContainer}>
-        {/* Main character - BBQ chef */}
-        <Text style={styles.playerEmoji}>👨‍🍳</Text>
-        
-        {/* Chef hat with bounce */}
-        <Animated.View
-          style={[
-            styles.hat,
-            {
-              transform: [{ translateY: bounceTransform }],
-            },
-          ]}
-        >
-          <Text style={styles.hatEmoji}>👑</Text>
-        </Animated.View>
+        {/* Main character image */}
+        <Image
+          source={require('../../assets/characters/main_character.png')}
+          style={styles.playerImage}
+          resizeMode="contain"
+        />
 
         {/* Invincibility shield effect */}
         {isInvincible && (
-          <View style={styles.shield}>
-            <Text style={styles.shieldEmoji}>🛡️</Text>
-          </View>
+          <Animated.View 
+            style={[
+              styles.shield,
+              {
+                opacity: invincibilityAnim.interpolate({
+                  inputRange: [0.3, 1],
+                  outputRange: [1, 0.5],
+                }),
+              },
+            ]}
+          >
+            <View style={styles.shieldGlow} />
+          </Animated.View>
         )}
-
-        {/* Wing flap effect */}
-        <Animated.View
-          style={[
-            styles.wings,
-            {
-              transform: [
-                { 
-                  rotateZ: bounceAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0deg', '15deg'],
-                  })
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.wingEmoji}>🔥</Text>
-        </Animated.View>
       </View>
     </Animated.View>
   );
@@ -119,48 +102,35 @@ export default function Player({ x, y, isInvincible }) {
 const styles = StyleSheet.create({
   player: {
     position: 'absolute',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
     zIndex: 10,
   },
   playerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
-  playerEmoji: {
-    fontSize: 32,
-    textAlign: 'center',
-  },
-  hat: {
-    position: 'absolute',
-    top: -15,
-    left: 5,
-  },
-  hatEmoji: {
-    fontSize: 16,
+  playerImage: {
+    width: 45,
+    height: 45,
   },
   shield: {
     position: 'absolute',
     top: -5,
     left: -5,
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shieldEmoji: {
-    fontSize: 40,
-    opacity: 0.8,
-  },
-  wings: {
-    position: 'absolute',
-    top: 10,
-    right: -10,
-  },
-  wingEmoji: {
-    fontSize: 20,
-    opacity: 0.7,
+  shieldGlow: {
+    width: 55,
+    height: 55,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 0, 0.3)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 0, 0.8)',
   },
 }); 

@@ -2,119 +2,93 @@ import { Audio } from 'expo-av';
 
 export class SoundManager {
   constructor() {
-    this.sounds = {};
     this.isEnabled = true;
+    this.sounds = {};
   }
 
   async loadSounds() {
     try {
-      // Set audio mode for games
+      console.log('🎵 Loading sound effects...');
+      
+      // Set audio mode for iOS
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
         staysActiveInBackground: false,
-        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
         playsInSilentModeIOS: true,
         shouldDuckAndroid: true,
-        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
         playThroughEarpieceAndroid: false,
       });
 
-      // Since we don't have actual sound files, we'll create placeholder sounds
-      // In a real app, you would load actual sound files here
-      this.sounds = {
-        flap: null,
-        hit: null,
-        score: null,
-        background: null,
-      };
+      // Load background music
+      const { sound: bgMusic } = await Audio.Sound.createAsync(
+        require('../../assets/audio/background_music.mp3'),
+        {
+          isLooping: true,
+          volume: 0.2, // Lower volume for background
+        }
+      );
+      this.sounds.backgroundMusic = bgMusic;
 
-      console.log('Sound manager initialized (placeholder mode)');
+      console.log('🎵 Sound effects loaded successfully!');
     } catch (error) {
       console.warn('Failed to load sounds:', error);
       this.isEnabled = false;
     }
   }
 
-  async playFlap() {
-    if (!this.isEnabled) return;
-    
-    try {
-      // Placeholder for flap sound
-      // In a real app: await this.sounds.flap?.replayAsync();
-      console.log('🎵 Flap sound played');
-    } catch (error) {
-      console.warn('Failed to play flap sound:', error);
-    }
-  }
-
-  async playHit() {
-    if (!this.isEnabled) return;
-    
-    try {
-      // Placeholder for hit sound
-      // In a real app: await this.sounds.hit?.replayAsync();
-      console.log('🎵 Hit sound played');
-    } catch (error) {
-      console.warn('Failed to play hit sound:', error);
-    }
-  }
-
-  async playScore() {
-    if (!this.isEnabled) return;
-    
-    try {
-      // Placeholder for score sound
-      // In a real app: await this.sounds.score?.replayAsync();
-      console.log('🎵 Score sound played');
-    } catch (error) {
-      console.warn('Failed to play score sound:', error);
-    }
-  }
-
   async playBackgroundMusic() {
-    if (!this.isEnabled) return;
-    
-    try {
-      // Placeholder for background music
-      // In a real app: await this.sounds.background?.setIsLoopingAsync(true);
-      // await this.sounds.background?.playAsync();
-      console.log('🎵 Background music started');
-    } catch (error) {
-      console.warn('Failed to play background music:', error);
+    if (this.isEnabled && this.sounds.backgroundMusic) {
+      try {
+        await this.sounds.backgroundMusic.playAsync();
+        console.log('🎵 Background music started');
+      } catch (error) {
+        console.warn('Failed to play background music:', error);
+      }
     }
   }
 
   async stopBackgroundMusic() {
-    if (!this.isEnabled) return;
-    
-    try {
-      // Placeholder for stopping background music
-      // In a real app: await this.sounds.background?.stopAsync();
-      console.log('🎵 Background music stopped');
-    } catch (error) {
-      console.warn('Failed to stop background music:', error);
+    if (this.isEnabled && this.sounds.backgroundMusic) {
+      try {
+        await this.sounds.backgroundMusic.stopAsync();
+        console.log('🎵 Background music stopped');
+      } catch (error) {
+        console.warn('Failed to stop background music:', error);
+      }
     }
   }
 
-  setEnabled(enabled) {
-    this.isEnabled = enabled;
-    if (!enabled) {
-      this.stopBackgroundMusic();
+  async playFlap() {
+    if (this.isEnabled) {
+      // For now, just console log - you can add actual flap sound file later
+      console.log('🎵 Flap sound');
     }
   }
 
-  cleanup() {
-    try {
-      // Cleanup all sounds
-      Object.values(this.sounds).forEach(async (sound) => {
-        if (sound) {
-          await sound.unloadAsync();
-        }
-      });
-      console.log('Sound manager cleaned up');
-    } catch (error) {
-      console.warn('Failed to cleanup sounds:', error);
+  async playScore() {
+    if (this.isEnabled) {
+      // For now, just console log - you can add actual score sound file later
+      console.log('🎵 Score sound');
     }
+  }
+
+  async playHit() {
+    if (this.isEnabled) {
+      // For now, just console log - you can add actual hit sound file later
+      console.log('🎵 Hit sound');
+    }
+  }
+
+  async cleanup() {
+    console.log('🎵 Cleaning up sound manager...');
+    if (this.sounds.backgroundMusic) {
+      try {
+        await this.sounds.backgroundMusic.unloadAsync();
+      } catch (error) {
+        console.warn('Error unloading background music:', error);
+      }
+    }
+    console.log('🎵 Sound manager cleaned up');
   }
 }
 

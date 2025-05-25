@@ -2,16 +2,19 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   Dimensions,
   TouchableWithoutFeedback,
   Animated,
+  TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Player from '../components/Player';
 import Obstacle from '../components/Obstacle';
 import Collectible from '../components/Collectible';
 import { SoundManager } from '../utils/SoundManager';
+import { GAME_CONSTANTS } from '../utils/GameConstants';
 
 const { width, height } = Dimensions.get('window');
 
@@ -43,10 +46,19 @@ export default function GameScreen({ onGameOver }) {
   const backgroundScrollRef = useRef(new Animated.Value(0)).current;
   const soundManager = useRef(new SoundManager()).current;
 
-  // Initialize sound manager
+  // Initialize sound manager and start background music
   useEffect(() => {
-    soundManager.loadSounds();
-    return () => soundManager.cleanup();
+    const initAudio = async () => {
+      await soundManager.loadSounds();
+      await soundManager.playBackgroundMusic();
+    };
+    
+    initAudio();
+    
+    return () => {
+      soundManager.stopBackgroundMusic();
+      soundManager.cleanup();
+    };
   }, []);
 
   // Background scrolling animation
@@ -82,9 +94,9 @@ export default function GameScreen({ onGameOver }) {
 
   const spawnCollectible = useCallback(() => {
     const collectibleTypes = [
-      { type: 'chicken', points: 2, emoji: '🍗' },
-      { type: 'mac_cheese', points: 3, emoji: '🧀' },
-      { type: 'plate', points: 5, emoji: '🍽️' },
+      { type: 'chicken', points: 2 },
+      { type: 'mac_cheese', points: 3 },
+      { type: 'plate', points: 5 },
     ];
     const collectible = collectibleTypes[Math.floor(Math.random() * collectibleTypes.length)];
     const newCollectible = {
@@ -99,8 +111,8 @@ export default function GameScreen({ onGameOver }) {
   const spawnPowerUp = useCallback(() => {
     if (Math.random() < 0.005) { // 0.5% chance
       const powerUpTypes = [
-        { type: 'shield', emoji: '🥤', duration: 3000 },
-        { type: 'pass', emoji: '🥗', effect: 'skip' },
+        { type: 'shield', duration: 3000 },
+        { type: 'pass', effect: 'skip' },
       ];
       const powerUp = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
       const newPowerUp = {
@@ -137,10 +149,12 @@ export default function GameScreen({ onGameOver }) {
         playerBounds.y < obstacleBounds.y + obstacleBounds.height &&
         playerBounds.y + playerBounds.height > obstacleBounds.y
       ) {
-        // Collision detected
-        setGameRunning(false);
-        soundManager.playHit();
-        onGameOver(score);
+        // Collision detected - use setTimeout to avoid setState during render
+        setTimeout(() => {
+          setGameRunning(false);
+          soundManager.playHit();
+          onGameOver(score);
+        }, 0);
         return;
       }
 
@@ -216,9 +230,11 @@ export default function GameScreen({ onGameOver }) {
         const newY = prev + playerVelocity;
         // Check boundaries
         if (newY <= 0 || newY >= height - 40) {
-          setGameRunning(false);
-          soundManager.playHit();
-          onGameOver(score);
+          setTimeout(() => {
+            setGameRunning(false);
+            soundManager.playHit();
+            onGameOver(score);
+          }, 0);
           return prev;
         }
         return newY;
@@ -289,79 +305,82 @@ export default function GameScreen({ onGameOver }) {
   return (
     <TouchableWithoutFeedback onPress={jump}>
       <View style={styles.container}>
-        <LinearGradient
-          colors={['#87CEEB', '#98FB98', '#F0E68C']}
-          style={styles.background}
+        {/* Background Image */}
+        <Image
+          source={require('../../assets/backgrounds/cookout_bg.png')}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        />
+        
+        {/* Background overlay for better visibility */}
+        <View style={styles.backgroundOverlay} />
+
+        {/* Scrolling background elements */}
+        <Animated.View
+          style={[
+            styles.backgroundElements,
+            {
+              transform: [{ translateX: backgroundScrollRef }],
+            },
+          ]}
         >
-          {/* Scrolling background elements */}
-          <Animated.View
-            style={[
-              styles.backgroundElements,
-              {
-                transform: [{ translateX: backgroundScrollRef }],
-              },
-            ]}
-          >
-            <Text style={styles.bgElement}>🌳</Text>
-            <Text style={styles.bgElement}>🏠</Text>
-            <Text style={styles.bgElement}>🌳</Text>
-          </Animated.View>
+          <Text style={styles.bgElement}>🌳</Text>
+          <Text style={styles.bgElement}>🏠</Text>
+          <Text style={styles.bgElement}>🌳</Text>
+        </Animated.View>
 
-          {/* Score display */}
-          <View style={styles.scoreContainer}>
-            <Text style={styles.scoreText}>Score: {score}</Text>
-            {gameSpeed > BASE_GAME_SPEED * 1.2 && (
-              <Text style={styles.speedText}>
-                🔥 Speed: {(gameSpeed / BASE_GAME_SPEED).toFixed(1)}x
-              </Text>
-            )}
-            {isInvincible && (
-              <Text style={styles.powerUpText}>🛡️ SHIELD ACTIVE</Text>
-            )}
-          </View>
+        {/* Score display */}
+        <View style={styles.scoreContainer}>
+          <Text style={styles.scoreText}>Score: {score}</Text>
+          {gameSpeed > BASE_GAME_SPEED * 1.2 && (
+            <Text style={styles.speedText}>
+              🔥 Speed: {(gameSpeed / BASE_GAME_SPEED).toFixed(1)}x
+            </Text>
+          )}
+          {isInvincible && (
+            <Text style={styles.powerUpText}>🛡️ SHIELD ACTIVE</Text>
+          )}
+        </View>
 
-          {/* Player */}
-          <Player x={80} y={playerY} isInvincible={isInvincible} />
+        {/* Player */}
+        <Player x={80} y={playerY} isInvincible={isInvincible} />
 
-          {/* Obstacles */}
-          {obstacles.map(obstacle => (
-            <Obstacle
-              key={obstacle.id}
-              x={obstacle.x}
-              y={obstacle.y}
-              type={obstacle.type}
-            />
-          ))}
+        {/* Obstacles */}
+        {obstacles.map(obstacle => (
+          <Obstacle
+            key={obstacle.id}
+            x={obstacle.x}
+            y={obstacle.y}
+            type={obstacle.type}
+          />
+        ))}
 
-          {/* Collectibles */}
-          {collectibles.map(collectible => (
-            <Collectible
-              key={collectible.id}
-              x={collectible.x}
-              y={collectible.y}
-              type={collectible.type}
-              emoji={collectible.emoji}
-              points={collectible.points}
-            />
-          ))}
+        {/* Collectibles */}
+        {collectibles.map(collectible => (
+          <Collectible
+            key={collectible.id}
+            x={collectible.x}
+            y={collectible.y}
+            type={collectible.type}
+            points={collectible.points}
+          />
+        ))}
 
-          {/* Power-ups */}
-          {powerUps.map(powerUp => (
-            <Collectible
-              key={powerUp.id}
-              x={powerUp.x}
-              y={powerUp.y}
-              type={powerUp.type}
-              emoji={powerUp.emoji}
-              isPowerUp={true}
-            />
-          ))}
+        {/* Power-ups */}
+        {powerUps.map(powerUp => (
+          <Collectible
+            key={powerUp.id}
+            x={powerUp.x}
+            y={powerUp.y}
+            type={powerUp.type}
+            isPowerUp={true}
+          />
+        ))}
 
-          {/* Instructions */}
-          <View style={styles.instructionsContainer}>
-            <Text style={styles.instructionsText}>Tap to flap!</Text>
-          </View>
-        </LinearGradient>
+        {/* Instructions */}
+        <View style={styles.instructionsContainer}>
+          <Text style={styles.instructionsText}>Tap to flap!</Text>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -371,8 +390,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  background: {
-    flex: 1,
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: width,
+    height: height,
+    zIndex: 1,
+  },
+  backgroundOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: width,
+    height: height,
+    backgroundColor: 'rgba(0,0,0,0.1)',
+    zIndex: 2,
   },
   backgroundElements: {
     position: 'absolute',
@@ -380,6 +413,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: width * 2,
+    zIndex: 3,
   },
   bgElement: {
     fontSize: 40,
@@ -417,6 +451,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     alignItems: 'center',
+    zIndex: 10,
   },
   instructionsText: {
     fontSize: 18,
@@ -426,4 +461,4 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 2,
   },
-}); 
+});

@@ -58,7 +58,7 @@ export default function GameOverScreen({ score, highScore, onRestart, onHome }) 
         ]}
       >
         {/* Game Over Title */}
-        <Text style={styles.gameOverTitle}>🍖 GAME OVER 🍖</Text>
+        <Text style={styles.gameOverTitle}>GAME OVER</Text>
         
         {/* Sad cookout emoji */}
         <Text style={styles.sadEmoji}>😭</Text>
@@ -70,7 +70,7 @@ export default function GameOverScreen({ score, highScore, onRestart, onHome }) 
           
           {isNewHighScore && (
             <View style={styles.newHighScoreContainer}>
-              <Text style={styles.newHighScoreText}>🎉 NEW HIGH SCORE! 🎉</Text>
+              <Text style={styles.newHighScoreText}>NEW HIGH SCORE!</Text>
             </View>
           )}
           
@@ -111,11 +111,11 @@ export default function GameOverScreen({ score, highScore, onRestart, onHome }) 
           ]}
         >
           <TouchableOpacity style={styles.retryButton} onPress={onRestart}>
-            <Text style={styles.retryButtonText}>🔄 TRY AGAIN</Text>
+            <Text style={styles.retryButtonText}>TRY AGAIN</Text>
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.homeButton} onPress={onHome}>
-            <Text style={styles.homeButtonText}>🏠 HOME</Text>
+            <Text style={styles.homeButtonText}>HOME</Text>
           </TouchableOpacity>
         </Animated.View>
 
@@ -123,13 +123,13 @@ export default function GameOverScreen({ score, highScore, onRestart, onHome }) 
         <View style={styles.statsContainer}>
           <Text style={styles.statsTitle}>BBQ Stats:</Text>
           <Text style={styles.statText}>
-            🍗 Chicken legs missed: {Math.max(0, 10 - Math.floor(score / 2))}
+            Chicken legs missed: {Math.max(0, 10 - Math.floor(score / 2))}
           </Text>
           <Text style={styles.statText}>
-            🏈 Footballs dodged: {Math.floor(score / 3)}
+            Footballs dodged: {Math.floor(score / 3)}
           </Text>
           <Text style={styles.statText}>
-            🕺 Dancing uncles avoided: {Math.floor(score / 5)}
+            Dancing uncles avoided: {Math.floor(score / 5)}
           </Text>
         </View>
       </Animated.View>

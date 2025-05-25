@@ -89,13 +89,6 @@ export default function HomeScreen({ onStartGame, highScore }) {
         <Text style={styles.smokeText}>💨</Text>
       </Animated.View>
 
-      {/* Dancing silhouettes */}
-      <View style={styles.silhouettes}>
-        <Text style={styles.silhouette}>🕺</Text>
-        <Text style={styles.silhouette}>💃</Text>
-        <Text style={styles.silhouette}>🕺</Text>
-      </View>
-
       {/* Game Title */}
       <Animated.View
         style={[
@@ -113,7 +106,7 @@ export default function HomeScreen({ onStartGame, highScore }) {
           },
         ]}
       >
-        <Text style={styles.title}>🍖 COOKOUT</Text>
+        <Text style={styles.title}>COOKOUT</Text>
         <Text style={styles.subtitle}>DASH</Text>
         <Text style={styles.tagline}>Flap through the BBQ!</Text>
       </Animated.View>
@@ -143,17 +136,9 @@ export default function HomeScreen({ onStartGame, highScore }) {
         ]}
       >
         <TouchableOpacity style={styles.playButton} onPress={onStartGame}>
-          <Text style={styles.playButtonText}>🔥 PLAY 🔥</Text>
+          <Text style={styles.playButtonText}>PLAY</Text>
         </TouchableOpacity>
       </Animated.View>
-
-      {/* Decorative elements */}
-      <View style={styles.decorations}>
-        <Text style={styles.decoration}>🍗</Text>
-        <Text style={styles.decoration}>🥤</Text>
-        <Text style={styles.decoration}>🏈</Text>
-        <Text style={styles.decoration}>🧀</Text>
-      </View>
     </LinearGradient>
   );
 }

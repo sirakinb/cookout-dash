@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Image, Text, StyleSheet, Animated } from 'react-native';
 
 const obstacleConfig = {
-  domino: { emoji: '🀫', size: 35, color: '#2c3e50' },
-  smoke: { emoji: '💨', size: 40, color: '#95a5a6' },
-  football: { emoji: '🏈', size: 30, color: '#8b4513' },
-  uncle: { emoji: '🕺', size: 35, color: '#e74c3c' },
+  domino: { size: 35, color: 'rgba(44, 62, 80, 0.2)' },
+  smoke: { size: 40, color: 'rgba(149, 165, 166, 0.2)' },
+  football: { size: 30, color: 'rgba(139, 69, 19, 0.2)' },
+  uncle: { size: 35, color: 'rgba(231, 76, 60, 0.2)' },
 };
 
 export default function Obstacle({ x, y, type }) {
@@ -74,6 +74,22 @@ export default function Obstacle({ x, y, type }) {
     outputRange: ['0deg', '360deg'],
   });
 
+  const getImageSource = () => {
+    switch (type) {
+      case 'domino':
+        return require('../../assets/obstacles/dominoes.png');
+      case 'smoke':
+        return require('../../assets/obstacles/smoke.png');
+      case 'uncle':
+        return require('../../assets/obstacles/uncle_dancer.png');
+      case 'football':
+        // Using dominoes as fallback since we don't have football asset
+        return require('../../assets/obstacles/dominoes.png');
+      default:
+        return require('../../assets/obstacles/dominoes.png');
+    }
+  };
+
   return (
     <Animated.View
       style={[
@@ -88,14 +104,11 @@ export default function Obstacle({ x, y, type }) {
         },
       ]}
     >
-      <View style={[styles.obstacleContainer, { backgroundColor: config.color }]}>
-        <Text style={[styles.obstacleEmoji, { fontSize: config.size }]}>
-          {config.emoji}
-        </Text>
-      </View>
-      
-      {/* Shadow effect */}
-      <View style={styles.shadow} />
+      <Image
+        source={getImageSource()}
+        style={[styles.obstacleImage, { width: config.size, height: config.size }]}
+        resizeMode="contain"
+      />
       
       {/* Special effects for certain obstacles */}
       {type === 'smoke' && (
@@ -130,30 +143,8 @@ const styles = StyleSheet.create({
     height: 40,
     zIndex: 5,
   },
-  obstacleContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-  },
-  obstacleEmoji: {
-    textAlign: 'center',
-  },
-  shadow: {
-    position: 'absolute',
-    bottom: -5,
-    left: 5,
-    width: 30,
-    height: 8,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    borderRadius: 15,
-    zIndex: -1,
+  obstacleImage: {
+    // Dynamic width and height set in component
   },
   smokeTrail: {
     position: 'absolute',
