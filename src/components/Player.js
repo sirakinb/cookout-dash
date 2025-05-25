@@ -71,9 +71,9 @@ export default function Player({ x, y, isInvincible }) {
       ]}
     >
       <View style={styles.playerContainer}>
-        {/* Main character image */}
+        {/* Main character image - Adzo */}
         <Image
-          source={require('../../assets/characters/main_character.png')}
+          source={require('../../assets/characters/main_character2.png')}
           style={styles.playerImage}
           resizeMode="contain"
         />

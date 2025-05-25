@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Dimensions,
   Animated,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -89,7 +90,7 @@ export default function HomeScreen({ onStartGame, highScore }) {
         <Text style={styles.smokeText}>💨</Text>
       </Animated.View>
 
-      {/* Game Title */}
+      {/* Game Logo */}
       <Animated.View
         style={[
           styles.titleContainer,
@@ -106,8 +107,11 @@ export default function HomeScreen({ onStartGame, highScore }) {
           },
         ]}
       >
-        <Text style={styles.title}>COOKOUT</Text>
-        <Text style={styles.subtitle}>DASH</Text>
+        <Image
+          source={require('../../assets/backgrounds/cookout_dash_logo.png')}
+          style={styles.logoImage}
+          resizeMode="contain"
+        />
         <Text style={styles.tagline}>Flap through the BBQ!</Text>
       </Animated.View>
 
@@ -178,28 +182,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 40,
   },
-  title: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#fff',
-    textShadowColor: '#000',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-  },
-  subtitle: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#fff',
-    textShadowColor: '#000',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
-    marginTop: -10,
+  logoImage: {
+    width: width * 0.7,
+    height: height * 0.25,
+    marginBottom: 10,
   },
   tagline: {
     fontSize: 16,
     color: '#fff',
     marginTop: 10,
     fontStyle: 'italic',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
   highScoreContainer: {
     backgroundColor: 'rgba(0,0,0,0.3)',

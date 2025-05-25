@@ -29,6 +29,25 @@ export class SoundManager {
       );
       this.sounds.backgroundMusic = bgMusic;
 
+      // TODO: Add these sound files to assets/audio/ folder:
+      // - collect.mp3 (satisfaction sound for collecting items)
+      // - game_over.mp3 (whomp whomp sound for losing)
+      
+      // Uncomment these when you add the sound files:
+      /*
+      const { sound: collectSound } = await Audio.Sound.createAsync(
+        require('../../assets/audio/collect.mp3'),
+        { volume: 0.6 }
+      );
+      this.sounds.collect = collectSound;
+
+      const { sound: gameOverSound } = await Audio.Sound.createAsync(
+        require('../../assets/audio/game_over.mp3'),
+        { volume: 0.8 }
+      );
+      this.sounds.gameOver = gameOverSound;
+      */
+
       console.log('🎵 Sound effects loaded successfully!');
     } catch (error) {
       console.warn('Failed to load sounds:', error);
@@ -72,6 +91,38 @@ export class SoundManager {
     }
   }
 
+  async playCollect() {
+    if (this.isEnabled && this.sounds.collect) {
+      try {
+        // Reset to beginning and play
+        await this.sounds.collect.setPositionAsync(0);
+        await this.sounds.collect.playAsync();
+        console.log('🎵 Collect sound played');
+      } catch (error) {
+        console.warn('Failed to play collect sound:', error);
+      }
+    } else if (this.isEnabled) {
+      // Placeholder until sound file is added
+      console.log('🎵 *DING* Collect sound (placeholder)');
+    }
+  }
+
+  async playGameOver() {
+    if (this.isEnabled && this.sounds.gameOver) {
+      try {
+        // Reset to beginning and play
+        await this.sounds.gameOver.setPositionAsync(0);
+        await this.sounds.gameOver.playAsync();
+        console.log('🎵 Game over sound played');
+      } catch (error) {
+        console.warn('Failed to play game over sound:', error);
+      }
+    } else if (this.isEnabled) {
+      // Placeholder until sound file is added
+      console.log('🎵 *WHOMP WHOMP WHOMP* Game over sound (placeholder)');
+    }
+  }
+
   async playHit() {
     if (this.isEnabled) {
       // For now, just console log - you can add actual hit sound file later
@@ -81,13 +132,22 @@ export class SoundManager {
 
   async cleanup() {
     console.log('🎵 Cleaning up sound manager...');
-    if (this.sounds.backgroundMusic) {
-      try {
-        await this.sounds.backgroundMusic.unloadAsync();
-      } catch (error) {
-        console.warn('Error unloading background music:', error);
+    
+    // Clean up all sounds
+    const soundKeys = ['backgroundMusic', 'collect', 'gameOver'];
+    
+    for (const key of soundKeys) {
+      if (this.sounds[key]) {
+        try {
+          await this.sounds[key].unloadAsync();
+          console.log(`🎵 Unloaded ${key} sound`);
+        } catch (error) {
+          console.warn(`Error unloading ${key} sound:`, error);
+        }
       }
     }
+    
+    this.sounds = {};
     console.log('🎵 Sound manager cleaned up');
   }
 }

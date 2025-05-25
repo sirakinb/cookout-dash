@@ -153,6 +153,7 @@ export default function GameScreen({ onGameOver }) {
         setTimeout(() => {
           setGameRunning(false);
           soundManager.playHit();
+          soundManager.playGameOver();
           onGameOver(score);
         }, 0);
         return;
@@ -182,7 +183,7 @@ export default function GameScreen({ onGameOver }) {
           playerBounds.y + playerBounds.height > collectibleBounds.y
         ) {
           setScore(prev => prev + collectible.points);
-          soundManager.playScore();
+          soundManager.playCollect();
           return false; // Remove collectible
         }
         return true;
@@ -233,6 +234,7 @@ export default function GameScreen({ onGameOver }) {
           setTimeout(() => {
             setGameRunning(false);
             soundManager.playHit();
+            soundManager.playGameOver();
             onGameOver(score);
           }, 0);
           return prev;
