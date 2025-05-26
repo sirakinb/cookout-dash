@@ -35,7 +35,7 @@ If we update this privacy policy, we will post the new policy here with a new "L
 
 ## Contact Us
 If you have questions about this privacy policy, please contact us:
-- Email: [Your Email]
+- Email: admin@pentridgemedia.com
 - GitHub: https://github.com/sirakinb/cookout-dash/issues
 
 ---
